@@ -1,6 +1,7 @@
 package com.ohci.hello_spring_boot.service;
 
 import com.ohci.hello_spring_boot.DTO.request.UserRequest;
+import com.ohci.hello_spring_boot.DTO.respone.RoleResponse;
 import com.ohci.hello_spring_boot.DTO.respone.UserResponse;
 import com.ohci.hello_spring_boot.Exception.AppException;
 import org.springframework.stereotype.Service;
@@ -17,4 +18,6 @@ public interface UserService {
     void deleteUsers(List<Long> ids);
     void deleteAllUsers();
     UserResponse getMyInfo();
+
+
 }

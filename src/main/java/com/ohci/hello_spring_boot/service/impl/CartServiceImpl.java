@@ -2,13 +2,18 @@ package com.ohci.hello_spring_boot.service.impl;
 
 import com.ohci.hello_spring_boot.DTO.request.CartRequest;
 import com.ohci.hello_spring_boot.DTO.respone.CartResponse;
+import com.ohci.hello_spring_boot.DTO.respone.ProductResponse;
 import com.ohci.hello_spring_boot.Mapper.CartMapper;
+import com.ohci.hello_spring_boot.Mapper.ProductsMapper;
 import com.ohci.hello_spring_boot.repository.CartRepository;
 import com.ohci.hello_spring_boot.repository.Entity.CartItemEntity;
 import com.ohci.hello_spring_boot.repository.Entity.ProductsEntity;
+import com.ohci.hello_spring_boot.repository.Entity.UserEntity;
 import com.ohci.hello_spring_boot.repository.ProductRepository;
+import com.ohci.hello_spring_boot.repository.UserRepository;
 import com.ohci.hello_spring_boot.service.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -26,6 +31,10 @@ public class CartServiceImpl implements CartService {
 
     @Autowired
     private CartMapper cartMapper;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private ProductsMapper productsMapper ;
 
     @Override
     public CartResponse getProduct(Long userId) {
@@ -35,29 +44,35 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public CartResponse getAllProductsCard(Long id) {
-        Optional<CartItemEntity> cartItemEntity = cartRepository.findById(id);
-        CartItemEntity item = cartItemEntity.get();
-        return cartMapper.toCart(item);
+    public ProductResponse getProductsCart(Long id) {
+        Optional<ProductsEntity> cartItemEntity = cartRepository.findByCartId(id);
+        ProductsEntity item = cartItemEntity.get();
+        return productsMapper.toRespone(item);
     }
 
     @Override
-    public CartResponse addProductsCard(Long id, int quantity, LocalDate created) {
+    public CartResponse addProductsCart(Long id, Long userId, CartRequest cartRequest) {
         ProductsEntity productsEntity = productRepository.findById(id).get();
-        CartItemEntity cartItemEntity = CartItemEntity.builder()
+        UserEntity userEntity = userRepository.findById(userId).get();
+        CartItemEntity cartItemEntity = null;
+        cartMapper.toCartItemEntity(cartRequest,cartItemEntity);
+        cartItemEntity = CartItemEntity.builder()
                 .name(productsEntity.getName())
-                .quantity(quantity)
-                .price(productsEntity.getPrice())
-                .createdAt(created)
+                .user(userEntity)
+                .product(productsEntity)
                 .build();
-        return cartMapper.toCart(cartRepository.saveAndFlush(cartItemEntity));
+        userEntity.getCart().add(cartItemEntity);
+        userRepository.save(userEntity);
+        productsEntity.getCartItemEntity().add(cartItemEntity);
+        productRepository.save(productsEntity);
+        return cartMapper.toCart(cartRepository.save(cartItemEntity));
     }
 
     @Override
     public CartResponse update(Long cartId, CartRequest cartRequest) {
         CartItemEntity cartItemEntity = cartRepository.findById(cartId).get();
         cartMapper.toCartItemEntity(cartRequest, cartItemEntity);
-        return cartMapper.toCart(cartRepository.saveAndFlush(cartItemEntity));
+        return cartMapper.toCart(cartRepository.save(cartItemEntity));
     }
 
     @Override

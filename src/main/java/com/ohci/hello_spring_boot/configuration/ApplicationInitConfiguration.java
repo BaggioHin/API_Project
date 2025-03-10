@@ -8,7 +8,6 @@ import com.ohci.hello_spring_boot.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -17,19 +16,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.HashSet;
 
-@Slf4j
-@Configuration
 @RequiredArgsConstructor
+@Configuration
+@Slf4j
 public class ApplicationInitConfiguration {
-
-    @Autowired
-    PasswordEncoder passwordEncoder;
-
-    @Autowired
-    UserRepository userRepository;
-
-    @Autowired
-    RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
 
     @NonFinal
     static final String ADMIN_USER_NAME = "admin";
@@ -42,7 +35,6 @@ public class ApplicationInitConfiguration {
             prefix = "spring",
             value = "datasource.driverClassName",
             havingValue = "com.mysql.cj.jdbc.Driver")
-
     ApplicationRunner applicationRunner() {
         return args -> {
             if(userRepository.findByUserName(ADMIN_USER_NAME).isEmpty()) {
@@ -70,5 +62,5 @@ public class ApplicationInitConfiguration {
             }
             log.info("Application initialization completed .....");
         };
-        };
+    }
 }

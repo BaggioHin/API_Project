@@ -12,9 +12,10 @@ import java.util.Set;
 @NoArgsConstructor
 @Builder
 public class UserResponse {
-    private String RoleName;
+    private Long id;
     private String userName;
     private String fullName;
+    private String password;
     private String gender;
-    Set<RoleResponse> roles;
+    private Set<RoleResponse> roles;
 }

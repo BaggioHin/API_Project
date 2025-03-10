@@ -3,6 +3,7 @@ package com.ohci.hello_spring_boot.Controller;
 
 //import org.springframework.stereotype.Controller;
 import com.ohci.hello_spring_boot.DTO.request.ProductRequest;
+import com.ohci.hello_spring_boot.DTO.respone.ApiResponse;
 import com.ohci.hello_spring_boot.DTO.respone.ProductResponse;
 import com.ohci.hello_spring_boot.service.ProductService;
 import lombok.RequiredArgsConstructor;
@@ -35,29 +36,41 @@ public class ProductsController {
 
 //   Sau khi click vào sản phẩm thì nó sẽ hiện thông tin cụ thể hơn về sản phẩm
     @GetMapping(value = "{id}")
-    public ProductResponse getProduct(@PathVariable("id") Long product_id) {
+    public ApiResponse<ProductResponse> getProduct(@PathVariable("id") Long product_id) {
         ProductResponse productRespone = productService.getProduct(product_id);
-        return productRespone;
+        return ApiResponse.<ProductResponse>builder()
+                .result(productRespone)
+                .build();
     }
 
 //  Sau khi click trên giao diện phần thư mục thì nó sẽ hiện lên các sản phẩm trên
     @GetMapping(value = "category/{category_id}")
-    public List<ProductResponse> getAllProducts(@PathVariable("category_id") Long category_id) {
+    public ApiResponse<List<ProductResponse>> getAllProducts(@PathVariable("category_id") Long category_id) {
         List<ProductResponse> products = productService.getAllProductsByCategoryId(category_id);
-        return products;
+        return ApiResponse.<List<ProductResponse>>builder().result(products).build();
     }
 
 //    Lấy hết tất cả sản phâmr
-    @GetMapping
-    public List<ProductResponse> getAllProducts() {
+    @GetMapping("/allProducts")
+    public ApiResponse<List<ProductResponse>> getAllProducts() {
         List<ProductResponse> products = productService.getAllProducts();
-        return products;
+        return ApiResponse.<List<ProductResponse>>builder().result(products).build();
+    }
+
+    @PostMapping
+    public ApiResponse<ProductResponse> addProduct(@RequestBody ProductRequest productRequest) {
+        ProductResponse productResponse = productService.addProduct(productRequest);
+        return ApiResponse.<ProductResponse>builder()
+                .result(productResponse)
+                .build();
     }
 
     @PutMapping(value = "/{id}")
-    public ProductResponse updateProduct(@PathVariable("id") Long id, @RequestBody ProductRequest productRequest) {
+    public ApiResponse<ProductResponse> updateProduct(@PathVariable("id") Long id, @RequestBody ProductRequest productRequest) {
         ProductResponse productResponse = productService.update(id,productRequest);
-        return productResponse;
+        return ApiResponse.<ProductResponse>builder()
+                .result(productResponse)
+                .build();
     }
 
     @DeleteMapping(value = "/products")

@@ -13,6 +13,6 @@ import lombok.*;
 @AllArgsConstructor
 public class PermissionEntity {
     @Id
-    String name;
-    String description;
+    private String name;
+    private String description;
 }

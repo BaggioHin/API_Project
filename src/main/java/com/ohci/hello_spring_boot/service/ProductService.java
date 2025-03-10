@@ -12,6 +12,7 @@ public interface ProductService {
     ProductResponse getProduct(Long id);
     List<ProductResponse> getAllProductsByCategoryId(Long category_id);
     List<ProductResponse> getAllProducts();
+    ProductResponse addProduct(ProductRequest productRequest);
     void deleteProduct(List<Long> ids);
     void deleteAllProducts();
     ProductResponse update(Long id, @RequestBody ProductRequest productRequest);

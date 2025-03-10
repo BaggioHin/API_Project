@@ -10,6 +10,7 @@ import com.ohci.hello_spring_boot.service.RoleService;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -19,17 +20,14 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class RoleServiceImpl implements RoleService {
-
-    @Autowired
     RoleRepository roleRepository;
 
-    @Autowired
     RoleMapper roleMapper;
 
-    @Autowired
     PermissionRepository permissionRepository;
 
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public RoleResponse create(RoleRequest roleRequest) {
         RoleEntity roleEntity = roleMapper.toRole(roleRequest);
 
@@ -41,6 +39,7 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public List<RoleResponse> getAllRoles() {
         List<RoleEntity> roleEntities = roleRepository.findAll();
         List<RoleResponse> roleResponses = new ArrayList<>();
@@ -51,6 +50,7 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public void delete(String name) {
         roleRepository.deleteByName(name);
     }

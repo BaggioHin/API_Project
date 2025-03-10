@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.Date;
-import java.util.Set;
 
 @Entity
 @NoArgsConstructor
@@ -17,6 +16,7 @@ public class OrderItemEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String name;
     private Integer quantity;
     private Double price;
     private Date createdAt;
@@ -25,6 +25,7 @@ public class OrderItemEntity {
     @JoinColumn(name = "user_id")
     private UserEntity user;
 
-    @OneToOne(mappedBy = "orderItemEntity")
+    @ManyToOne
+    @JoinColumn(name="product_id")
     private ProductsEntity product;
 }

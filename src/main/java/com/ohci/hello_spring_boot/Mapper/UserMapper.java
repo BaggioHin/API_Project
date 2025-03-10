@@ -13,6 +13,8 @@ public interface UserMapper {
     void updateUserFromRequest(UserRequest request, @MappingTarget UserEntity user);
 
     //    RoleUserEntity toRoleUserEntity(UserRequest request);
+    @Mapping(target = "id", source = "id")
+    @Mapping(target = "password", source = "password")
     @Mapping(target = "roles",ignore = true)
     UserResponse toUserResponse(UserEntity entity);
 }

@@ -26,6 +26,7 @@ public class CartItemEntity {
     @JoinColumn(name = "user_id")
     private UserEntity user;
 
-   @OneToOne(mappedBy = "cartItemEntity")
+   @ManyToOne
+   @JoinColumn(name="product_id")
     private ProductsEntity product;
 }

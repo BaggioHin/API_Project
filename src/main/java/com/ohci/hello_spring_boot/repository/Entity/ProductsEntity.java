@@ -3,6 +3,8 @@ package com.ohci.hello_spring_boot.repository.Entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = "products")
 @NoArgsConstructor
@@ -39,11 +41,10 @@ public class ProductsEntity {
     @JoinColumn(name = "categoty_id")
     private CategoryEntity category;
 
-    @OneToOne
-    @JoinColumn(name = "order_id")
-    private OrderItemEntity orderItemEntity;
+    @OneToMany(mappedBy = "product")
+    private List<OrderItemEntity> orderItemEntity;
 
-    @OneToOne
-    @JoinColumn(name = "cart_id")
-    private CartItemEntity cartItemEntity;
+    @OneToMany
+    @JoinColumn(name = "product")
+    private List<CartItemEntity> cartItemEntity;
 }

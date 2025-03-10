@@ -14,7 +14,7 @@ import java.util.Date;
 @NoArgsConstructor
 @Builder
 public class UserRequest {
-    private String RoleName;
+    private String roleName;
     private String userName;
     private String password;
     private String fullName;

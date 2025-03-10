@@ -3,12 +3,16 @@ package com.ohci.hello_spring_boot.service.impl;
 import com.ohci.hello_spring_boot.DTO.request.ProductRequest;
 import com.ohci.hello_spring_boot.DTO.respone.ProductResponse;
 import com.ohci.hello_spring_boot.Mapper.ProductsMapper;
+import com.ohci.hello_spring_boot.repository.CategoryRespository;
+import com.ohci.hello_spring_boot.repository.Entity.CategoryEntity;
 import com.ohci.hello_spring_boot.repository.Entity.ProductsEntity;
 import com.ohci.hello_spring_boot.repository.ProductRepository;
 import com.ohci.hello_spring_boot.service.CartService;
+import com.ohci.hello_spring_boot.service.CategorySevice;
 import com.ohci.hello_spring_boot.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,7 +31,15 @@ public class ProductServiceimpl implements ProductService {
     ProductsMapper productsConverter;
 
     @Autowired
+    CategorySevice categorySevice;
+
+    @Autowired
     CartService cartService;
+
+    @Autowired
+    CategoryRespository categoryRespository;
+    @Autowired
+    private CategorySeviceImpl categorySeviceImpl;
 
     @Override
     public ProductResponse getProduct(Long id) {
@@ -59,16 +71,30 @@ public class ProductServiceimpl implements ProductService {
     }
 
     @Override
+    public ProductResponse addProduct(ProductRequest productRequest) {
+        ProductsEntity productsEntity =productsConverter.toProductsEntity(productRequest);
+        var id = productRequest.getCategoryId();
+        productsEntity.setCategory(categoryRespository.findById(id).get());
+        productRepository.save(productsEntity);
+        CategoryEntity categoryEntity = categoryRespository.findById(productsEntity.getCategory().getId()).get();
+        categorySeviceImpl.addProducts(categoryEntity,productsEntity);
+        return productsConverter.toRespone(productsEntity);
+    }
+
+    @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public void deleteProduct(List<Long> ids) {
         productRepository.deleteByIdIn(ids);
     }
 
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public void deleteAllProducts() {
         productRepository.deleteAll();
     }
 
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public ProductResponse update(Long id, ProductRequest productRequest) {
         ProductsEntity productsEntity = productRepository.findById(id).get();
         ProductsEntity productEntity = productsConverter.toProductsEntity(productRequest);

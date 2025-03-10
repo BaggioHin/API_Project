@@ -1,6 +1,7 @@
 package com.ohci.hello_spring_boot.repository;
 
 import com.ohci.hello_spring_boot.repository.Entity.CartItemEntity;
+import com.ohci.hello_spring_boot.repository.Entity.ProductsEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -17,4 +18,7 @@ public interface CartRepository extends JpaRepository<CartItemEntity,Long> {
 
     @Query("SELECT c FROM CartItemEntity c JOIN c.user u WHERE u.id =: id")
     Optional<CartItemEntity> findByUserId( Long id);
+
+    @Query("SELECT p FROM ProductsEntity p JOIN p.cartItemEntity c WHERE c.id=: id")
+    Optional<ProductsEntity> findByCartId(Long id);
 }

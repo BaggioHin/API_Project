@@ -10,6 +10,7 @@ import com.ohci.hello_spring_boot.repository.Entity.CategoryEntity;
 import com.ohci.hello_spring_boot.repository.Entity.ProductsEntity;
 import com.ohci.hello_spring_boot.service.CategorySevice;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -29,7 +30,7 @@ public class CategorySeviceImpl implements CategorySevice {
     @Override
     public List<ProductResponse> getProducts(Long id) {
         List<ProductsEntity> productsEntities = categoryRespository.findByItemId(id);
-        List<ProductResponse> productResponses = new ArrayList<ProductResponse>();
+        List<ProductResponse> productResponses = new ArrayList<>();
         for (ProductsEntity productsEntity : productsEntities) {
             productResponses.add(productsConverter.toRespone(productsEntity));
         }
@@ -37,6 +38,7 @@ public class CategorySeviceImpl implements CategorySevice {
     }
 
     @Override
+    @PreAuthorize("hasAuthority('ADMIN')")
     public CategoryResponse updateCategory(Long id, CategoryRequest categoryRequest) {
         Optional<CategoryEntity> category = categoryRespository.findById(id);
         CategoryEntity categoryItem = category.get();
@@ -45,13 +47,22 @@ public class CategorySeviceImpl implements CategorySevice {
     }
 
     @Override
+    @PreAuthorize("hasAuthority('ADMIN')")
     public CategoryResponse addCategory(CategoryRequest category) {
         CategoryEntity categoryEntity = categoryMapper.createCategoryFromRequest(category);
         return categoryMapper.toCategoryResponse(categoryRespository.save(categoryEntity));
     }
 
     @Override
+    @PreAuthorize("hasAuthority('ADMIN')")
     public void deleteCategory(Long id) {
         categoryRespository.deleteById(id);
+    }
+
+    public CategoryResponse addProducts(CategoryEntity categoryEntity,ProductsEntity productsEntity) {
+        var products = categoryEntity.getProducts();
+        products.add(productsEntity);
+        categoryEntity.setProducts(products);
+        return categoryMapper.toCategoryResponse(categoryRespository.save(categoryEntity));
     }
 }

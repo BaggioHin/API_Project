@@ -3,14 +3,13 @@ package com.ohci.hello_spring_boot.Controller;
 import com.ohci.hello_spring_boot.DTO.request.CartRequest;
 import com.ohci.hello_spring_boot.DTO.respone.ApiResponse;
 import com.ohci.hello_spring_boot.DTO.respone.CartResponse;
+import com.ohci.hello_spring_boot.DTO.respone.ProductResponse;
 import com.ohci.hello_spring_boot.Mapper.CartMapper;
 import com.ohci.hello_spring_boot.repository.CartRepository;
-import com.ohci.hello_spring_boot.repository.Entity.CartItemEntity;
 import com.ohci.hello_spring_boot.service.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -26,25 +25,26 @@ public class CartController {
     //    Xem các item của giỏ hàng
     @GetMapping("user/{user_id}")
     public ApiResponse<CartResponse> getCart(@PathVariable Long user_id) {
-        CartItemEntity cartItemEntity = cartRepository.findByUserId(user_id).get();
         return ApiResponse.<CartResponse>builder()
-                .result(cartMapper.toCart(cartItemEntity))
+                .result(cartService.getProduct(user_id))
                 .build();
     }
 
-//    Xem các thông tin trong mục giỏ hàng
+//    Xem thông tin của cartItem
     @GetMapping(value = "/{cart_id}")
-    public ApiResponse<CartResponse> GetProductCard(@PathVariable Long user_id) {
-        CartResponse getProductsCard = cartService.getAllProductsCard(user_id);
-        return ApiResponse.<CartResponse>builder()
-                .result(getProductsCard)
+    public ApiResponse<ProductResponse> GetProductCard(@PathVariable Long user_id) {
+        ProductResponse getProductsCart = cartService.getProductsCart(user_id);
+        return ApiResponse.<ProductResponse>builder()
+                .result(getProductsCart)
                 .build();
     }
+
 //    Thêm các sản phẩm trong giỏ hangf
-    @PostMapping(value = "/{product_id}")
+    @PostMapping(value = "/{user_id}/{product_id}")
     public ApiResponse<CartResponse> AddProductCard(@PathVariable("product_id") Long id,
-                                                    int quantity, LocalDate created) {
-        CartResponse addProductsCard = cartService.addProductsCard(id,quantity,created);
+                                                    @PathVariable("user_id") Long user_id,
+                                                    CartRequest request) {
+        CartResponse addProductsCard = cartService.addProductsCart(id,user_id,request);
         return ApiResponse.<CartResponse>builder()
                 .result(addProductsCard)
                 .build();

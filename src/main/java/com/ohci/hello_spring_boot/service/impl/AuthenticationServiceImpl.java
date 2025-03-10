@@ -30,6 +30,7 @@ import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.UUID;
 
 
 @Slf4j
@@ -132,6 +133,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .issuer("Baggio")
                 .issueTime(new Date())
                 .expirationTime(new Date(Instant.now().plus(VALID_DURATION, ChronoUnit.SECONDS).toEpochMilli()))
+                .jwtID(UUID.randomUUID().toString())
                 .claim("SCOPE", buildscope(user))
                 .build();
 
