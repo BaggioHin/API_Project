@@ -8,8 +8,9 @@ import lombok.*;
 @NoArgsConstructor  // Tạo constructor không tham số
 @Builder
 public class ProductResponse {
+    private Long id;
     private String name;
-    private String branchName;
+    private String brandName;
     private Double price;
     private String thumbnailUrl;
 //    private Integer reviewCount;

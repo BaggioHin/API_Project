@@ -12,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -20,15 +22,18 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class RoleServiceImpl implements RoleService {
+    @Autowired
     RoleRepository roleRepository;
 
+    @Autowired
     RoleMapper roleMapper;
 
+    @Autowired
     PermissionRepository permissionRepository;
 
     @Override
-    @PreAuthorize("hasRole('ADMIN')")
-    public RoleResponse create(RoleRequest roleRequest) {
+    @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
+    public RoleResponse create(@RequestBody RoleRequest roleRequest) {
         RoleEntity roleEntity = roleMapper.toRole(roleRequest);
 
         var permissionEntity = permissionRepository.findAllById(roleRequest.getPermissions());
@@ -39,7 +44,7 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
     public List<RoleResponse> getAllRoles() {
         List<RoleEntity> roleEntities = roleRepository.findAll();
         List<RoleResponse> roleResponses = new ArrayList<>();
@@ -50,7 +55,7 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
     public void delete(String name) {
         roleRepository.deleteByName(name);
     }

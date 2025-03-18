@@ -2,7 +2,6 @@ package com.ohci.hello_spring_boot.Controller;
 
 import com.ohci.hello_spring_boot.DTO.request.UserRequest;
 import com.ohci.hello_spring_boot.DTO.respone.ApiResponse;
-import com.ohci.hello_spring_boot.DTO.respone.RoleResponse;
 import com.ohci.hello_spring_boot.DTO.respone.UserResponse;
 import com.ohci.hello_spring_boot.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -50,7 +49,7 @@ public class UserController {
                 .build();
     }
 
-    @DeleteMapping("/user")
+    @DeleteMapping("/user/{ids}")
     public void deleteUser(@RequestParam List<Long> Ids) {
         userService.deleteUsers(Ids);
     }
@@ -60,8 +59,8 @@ public class UserController {
         userService.deleteAllUsers();
     }
 
-    @GetMapping("/my-info/{user_id}")
-    ApiResponse<UserResponse> getMyInfo(@PathVariable Long userId) {
+    @GetMapping("/my-info")
+    ApiResponse<UserResponse> getMyInfo() {
         return ApiResponse.<UserResponse>builder()
                 .result(userService.getMyInfo())
                 .build();

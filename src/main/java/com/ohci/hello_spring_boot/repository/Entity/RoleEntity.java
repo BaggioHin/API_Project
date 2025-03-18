@@ -15,9 +15,11 @@ import java.util.Set;
 @AllArgsConstructor
 public class RoleEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String name;
     private String description;
+
+    @ManyToMany(mappedBy = "roles")
+    private Set<UserEntity> users;
 
     @ManyToMany
     private Set<PermissionEntity> permissions;

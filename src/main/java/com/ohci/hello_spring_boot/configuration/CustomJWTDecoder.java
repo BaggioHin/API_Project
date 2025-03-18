@@ -5,6 +5,7 @@ import com.ohci.hello_spring_boot.DTO.request.IntrospectRequest;
 import com.ohci.hello_spring_boot.service.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
@@ -13,18 +14,21 @@ import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.util.Objects;
 
 @Component
+@Lazy
+//@Slf4j
 public class CustomJWTDecoder implements JwtDecoder {
     @Value("${jwt.signerKey}")
-    private String signerKey;
-
+    private  String signerKey;
     @Autowired
     private AuthenticationService authenticationService;
 
     private NimbusJwtDecoder nimbusJwtDecoder = null;
+
 
     @Override
     public Jwt decode(String token) throws JwtException {
@@ -39,12 +43,11 @@ public class CustomJWTDecoder implements JwtDecoder {
         }
 
         if (Objects.isNull(nimbusJwtDecoder)) {
-            SecretKeySpec secretKeySpec = new SecretKeySpec(signerKey.getBytes(), "HS512");
+            SecretKeySpec secretKeySpec = new SecretKeySpec(signerKey.getBytes(StandardCharsets.UTF_8), "HmacSHA512");
             nimbusJwtDecoder = NimbusJwtDecoder.withSecretKey(secretKeySpec)
                     .macAlgorithm(MacAlgorithm.HS512)
                     .build();
         }
-
         return nimbusJwtDecoder.decode(token);
     }
 }

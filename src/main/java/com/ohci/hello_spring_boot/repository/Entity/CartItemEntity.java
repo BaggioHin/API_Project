@@ -19,8 +19,9 @@ public class CartItemEntity {
     private Long id;
     private String name;
     private Integer quantity;
-    private Double price;
+    private Double totalPrice;
     private LocalDate createdAt;
+    private String thumbnailUrl;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

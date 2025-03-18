@@ -9,10 +9,10 @@ import java.util.List;
 
 @Service
 public interface OrderService {
-    OrderResponse getProducts(Long id);
+    List<OrderResponse> getProducts();
     ProductResponse getProductsCart(Long id);
-    OrderResponse addProductsCart(Long id, Long userId, OrderRequest orderRequest);
-    OrderResponse update(Long order_id,OrderRequest orderRequest,Long userId);
+    OrderResponse addProductsCart(Long productId, OrderRequest orderRequest);
+//    OrderResponse update(Long order_id,OrderRequest orderRequest,Long userId);
     void deleteAll(Long id);
     void delete(List<Long> ids,Long userId);
 }

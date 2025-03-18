@@ -1,9 +1,11 @@
 package com.ohci.hello_spring_boot.repository.Entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Set;
 
@@ -27,11 +29,7 @@ public class UserEntity {
 
     private String address;
 
-    private LocalDate birthday;
-
     private String email;
-
-    private Date createdAt;
 
     private Boolean isActive;
 
@@ -44,6 +42,11 @@ public class UserEntity {
     private String user_rank;
 
     @ManyToMany
+    @JoinTable(
+            name = "user_entity_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_name")
+    )
     private Set<RoleEntity> roles;
 
     @OneToMany(mappedBy = "user")

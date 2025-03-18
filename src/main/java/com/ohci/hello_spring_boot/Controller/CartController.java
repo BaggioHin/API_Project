@@ -4,8 +4,6 @@ import com.ohci.hello_spring_boot.DTO.request.CartRequest;
 import com.ohci.hello_spring_boot.DTO.respone.ApiResponse;
 import com.ohci.hello_spring_boot.DTO.respone.CartResponse;
 import com.ohci.hello_spring_boot.DTO.respone.ProductResponse;
-import com.ohci.hello_spring_boot.Mapper.CartMapper;
-import com.ohci.hello_spring_boot.repository.CartRepository;
 import com.ohci.hello_spring_boot.service.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -17,16 +15,12 @@ import java.util.List;
 public class CartController {
     @Autowired
     CartService cartService;
-    @Autowired
-    private CartRepository cartRepository;
-    @Autowired
-    private CartMapper cartMapper;
 
     //    Xem các item của giỏ hàng
-    @GetMapping("user/{user_id}")
-    public ApiResponse<CartResponse> getCart(@PathVariable Long user_id) {
-        return ApiResponse.<CartResponse>builder()
-                .result(cartService.getProduct(user_id))
+    @GetMapping("/user")
+    public ApiResponse<List<CartResponse>> getCart() {
+        return ApiResponse.<List<CartResponse>>builder()
+                .result(cartService.getProducts())
                 .build();
     }
 
@@ -40,16 +34,16 @@ public class CartController {
     }
 
 //    Thêm các sản phẩm trong giỏ hangf
-    @PostMapping(value = "/{user_id}/{product_id}")
-    public ApiResponse<CartResponse> AddProductCard(@PathVariable("product_id") Long id,
-                                                    @PathVariable("user_id") Long user_id,
-                                                    CartRequest request) {
-        CartResponse addProductsCard = cartService.addProductsCart(id,user_id,request);
-        return ApiResponse.<CartResponse>builder()
-                .result(addProductsCard)
-                .build();
-    }
-//    Cập nhật các sản phẩm trong giỏ hàng
+@PostMapping(value = "/{product_id}")
+public ApiResponse<CartResponse> addProductCart(@PathVariable("product_id") Long productId,
+                                                @RequestBody CartRequest request) {
+    CartResponse addProductsCart = cartService.addProductsCart( productId, request);
+    return ApiResponse.<CartResponse>builder()
+            .result(addProductsCart)
+            .build();
+}
+
+    //    Cập nhật các sản phẩm trong giỏ hàng
     @PutMapping(value = "/{cart_id}")
     public ApiResponse<CartResponse> updateCart(@PathVariable("cart_id") Long cart_id
             ,@RequestBody CartRequest cartRequest) {
@@ -64,8 +58,8 @@ public class CartController {
         cartService.deleteAll();
     }
 //  Xóa các sản phẩm trong giỏ hàng
-    @DeleteMapping("/cart")
-    public void deleteAllCart(@RequestParam List<Long> user_id){
-        cartService.delete(user_id);
+    @DeleteMapping("/{Id}")
+    public void deleteAllCart(@PathVariable("Id") Long Id){
+        cartService.delete(Id);
     }
 }

@@ -12,7 +12,7 @@ import java.util.Optional;
 
 @Repository
 //@Component
-public interface ProductRepository extends JpaRepository<ProductsEntity, Long>,ProductRepositoryCustom{
+public interface ProductRepository extends JpaRepository<ProductsEntity, Long>{
     Optional<ProductsEntity> findById(Long id);
 
     @Query(value = "SELECT p.* FROM products p JOIN category c ON p.category_id = c.id WHERE p.category_id = :categoryId",
@@ -22,6 +22,9 @@ public interface ProductRepository extends JpaRepository<ProductsEntity, Long>,P
     List<ProductsEntity> findAll();
 
     List<ProductsEntity> deleteByIdIn(List<Long> ids);
+
+    @Query("SELECT p FROM ProductsEntity p WHERE LOWER(p.name) LIKE LOWER(CONCAT('%', :name, '%'))")
+    List<ProductsEntity> findByName(@Param("name") String name);
 
 //    List<ProductsEntity> findTopProductPromotion();
 }

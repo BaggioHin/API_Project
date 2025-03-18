@@ -12,7 +12,9 @@ import java.util.Date;
 @Getter
 @Setter
 public class CartResponse {
+    private Long id;
     private Integer quantity;
-    private Double price;
+    private Double totalPrice;
     private Date createdAt;
+    private String thumbnailUrl;
 }

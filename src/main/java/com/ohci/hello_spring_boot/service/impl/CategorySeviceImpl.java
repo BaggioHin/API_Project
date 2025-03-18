@@ -23,7 +23,7 @@ public class CategorySeviceImpl implements CategorySevice {
     @Autowired
     CategoryRespository categoryRespository;
     @Autowired
-    ProductsMapper productsConverter;
+    ProductsMapper productsMapper;
     @Autowired
     CategoryMapper categoryMapper;
 
@@ -32,13 +32,13 @@ public class CategorySeviceImpl implements CategorySevice {
         List<ProductsEntity> productsEntities = categoryRespository.findByItemId(id);
         List<ProductResponse> productResponses = new ArrayList<>();
         for (ProductsEntity productsEntity : productsEntities) {
-            productResponses.add(productsConverter.toRespone(productsEntity));
+            productResponses.add(productsMapper.toRespone(productsEntity));
         }
         return productResponses;
     }
 
     @Override
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
     public CategoryResponse updateCategory(Long id, CategoryRequest categoryRequest) {
         Optional<CategoryEntity> category = categoryRespository.findById(id);
         CategoryEntity categoryItem = category.get();
@@ -47,18 +47,19 @@ public class CategorySeviceImpl implements CategorySevice {
     }
 
     @Override
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
     public CategoryResponse addCategory(CategoryRequest category) {
         CategoryEntity categoryEntity = categoryMapper.createCategoryFromRequest(category);
         return categoryMapper.toCategoryResponse(categoryRespository.save(categoryEntity));
     }
 
     @Override
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
     public void deleteCategory(Long id) {
         categoryRespository.deleteById(id);
     }
 
+    @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
     public CategoryResponse addProducts(CategoryEntity categoryEntity,ProductsEntity productsEntity) {
         var products = categoryEntity.getProducts();
         products.add(productsEntity);

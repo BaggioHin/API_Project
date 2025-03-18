@@ -4,6 +4,7 @@ import com.ohci.hello_spring_boot.DTO.request.UserRequest;
 import com.ohci.hello_spring_boot.DTO.respone.RoleResponse;
 import com.ohci.hello_spring_boot.DTO.respone.UserResponse;
 import com.ohci.hello_spring_boot.Exception.AppException;
+import com.ohci.hello_spring_boot.repository.Entity.InfForML;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,6 +19,5 @@ public interface UserService {
     void deleteUsers(List<Long> ids);
     void deleteAllUsers();
     UserResponse getMyInfo();
-
-
+    InfForML getInfForML(String query);
 }

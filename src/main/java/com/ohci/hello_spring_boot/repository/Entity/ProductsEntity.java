@@ -16,11 +16,11 @@ import java.util.List;
 public class ProductsEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer Id;
+    private Long id;
 //    1
     private String name;
 
-    private String branchName;
+    private String brandName;
 
     private Double price;
 
@@ -38,7 +38,7 @@ public class ProductsEntity {
     private Integer quantitySold;
 
     @ManyToOne
-    @JoinColumn(name = "categoty_id")
+    @JoinColumn(name = "category_id")
     private CategoryEntity category;
 
     @OneToMany(mappedBy = "product")

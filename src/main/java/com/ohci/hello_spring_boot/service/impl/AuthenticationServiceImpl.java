@@ -22,13 +22,17 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
+import java.util.Base64;
 import java.util.Date;
 import java.util.UUID;
 
@@ -42,6 +46,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private UserRepository userRepository;
 
     @Autowired
+    @Lazy
     private PasswordEncoder passwordEncoder;
 
     @Autowired
@@ -108,22 +113,28 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public AuthenticationResponse refreshToken(RefreshTokenRequest request) throws ParseException, JOSEException {
-        SignedJWT signedJWT = verifyToken(request.getToken(),false);
+        SignedJWT signedJWT = verifyToken(request.getToken(), true);
         String JId = signedJWT.getJWTClaimsSet().getJWTID();
+        String username = signedJWT.getJWTClaimsSet().getSubject();
         Date expirationDate = signedJWT.getJWTClaimsSet().getExpirationTime();
 
-        InvalidationTokenEntity invalidationTokenEntity = InvalidationTokenEntity.builder()
-                .id(JId).expiryTime(expirationDate).build();
+        if (invalidationTokenRepository.existsById(JId)) {
+            throw new AppException(ErrorCode.UNAUTHENTICATED);
+        }
 
-        invalidationTokenRepository.save(invalidationTokenEntity);
-        var user = userRepository.findByUserName(request.getToken())
+        invalidationTokenRepository.save(InvalidationTokenEntity.builder()
+                .id(JId).expiryTime(expirationDate).build());
+
+        var user = userRepository.findByUserName(username)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
-        String token =generateToken(user);
+
+        String newToken = generateToken(user);
         return AuthenticationResponse.builder()
                 .authenticated(true)
-                .token(token)
+                .token(newToken)
                 .build();
     }
+
 
     public String generateToken(UserEntity user) {
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
@@ -141,7 +152,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         JWSObject jwsObject = new JWSObject(header, payload);
 
         try {
-            jwsObject.sign(new MACSigner(SIGNER_KEY.getBytes()));
+            jwsObject.sign(new MACSigner(SIGNER_KEY.getBytes(StandardCharsets.UTF_8)));
+            log.debug("Signer key bytes: {}", Arrays.toString(SIGNER_KEY.getBytes()));
             return jwsObject.serialize();
         } catch (JOSEException e) {
             log.error("Cannot create token", e);
@@ -150,10 +162,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     public SignedJWT verifyToken(String token, boolean isRefresh) throws JOSEException, ParseException {
-        JWSVerifier verifier = new MACVerifier(SIGNER_KEY.getBytes());
+        JWSVerifier verifier = new MACVerifier(SIGNER_KEY.getBytes(StandardCharsets.UTF_8));
         SignedJWT signedJWT = SignedJWT.parse(token);
 
-        Date expiryTime = (isRefresh) ? signedJWT.getJWTClaimsSet().getExpirationTime() :
+        Date expiryTime = (!isRefresh) ? signedJWT.getJWTClaimsSet().getExpirationTime() :
                 new Date(signedJWT.getJWTClaimsSet()
                         .getIssueTime()
                         .toInstant()

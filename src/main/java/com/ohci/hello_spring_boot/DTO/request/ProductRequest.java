@@ -10,8 +10,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class ProductRequest {
+    private Long id;
     private String name;
-    private String branchName;
+    private String brandName;
     private Double price;
     private String thumbnailUrl;
 //    private Integer reviewCount;

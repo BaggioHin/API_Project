@@ -3,7 +3,7 @@ package com.ohci.hello_spring_boot.repository.Entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @Entity
 @NoArgsConstructor
@@ -18,8 +18,8 @@ public class OrderItemEntity {
     private Long id;
     private String name;
     private Integer quantity;
-    private Double price;
-    private Date createdAt;
+    private Double totalPrice;
+    private LocalDate createdAt;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
