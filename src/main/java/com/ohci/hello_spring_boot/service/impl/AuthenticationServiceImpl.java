@@ -65,6 +65,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     protected long REFRESHABLE_DURATION;
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
+        log.info(request.getUsername());
         var user = userRepository.findByUserName(request.getUsername())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 

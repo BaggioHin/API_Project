@@ -33,15 +33,15 @@ public class CartController {
                 .build();
     }
 
-//    Thêm các sản phẩm trong giỏ hangf
-@PostMapping(value = "/{product_id}")
-public ApiResponse<CartResponse> addProductCart(@PathVariable("product_id") Long productId,
-                                                @RequestBody CartRequest request) {
-    CartResponse addProductsCart = cartService.addProductsCart( productId, request);
-    return ApiResponse.<CartResponse>builder()
-            .result(addProductsCart)
-            .build();
-}
+    //    Thêm các sản phẩm trong giỏ hangf
+    @PostMapping(value = "/{product_id}")
+    public ApiResponse<CartResponse> addProductCart(@PathVariable("product_id") Long productId,
+                                                    @RequestBody CartRequest request) {
+        CartResponse addProductsCart = cartService.addProductsCart( productId, request);
+        return ApiResponse.<CartResponse>builder()
+                .result(addProductsCart)
+                .build();
+    }
 
     //    Cập nhật các sản phẩm trong giỏ hàng
     @PutMapping(value = "/{cart_id}")

@@ -1,15 +1,10 @@
 package com.ohci.hello_spring_boot.DTO.respone;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.ohci.hello_spring_boot.repository.Entity.ProductsEntity;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.util.List;
-
 @Data
-@Getter
-@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -20,7 +15,7 @@ public class AiRespone {
     private String name;
     private String brand;
     private Double price;
-    private String thumbnail_url;
+    private String thumbnailUrl;
     private Double rating;
     private String category;
 }

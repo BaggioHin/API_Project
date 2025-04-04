@@ -90,7 +90,7 @@ public class ProductServiceimpl implements ProductService {
         // Lấy danh sách sản phẩm trong giỏ hàng
         List<CartItemEntity> cartItemEntityList = cartRepository.findByUserId(user.getId());
         if (cartItemEntityList.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Giỏ hàng trống!");
+//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Giỏ hàng trống!");
         }
 
         // Lấy danh sách tên sản phẩm
@@ -127,7 +127,10 @@ public class ProductServiceimpl implements ProductService {
 
         System.out.println("Raw AI Response: " + rawResponse.getBody());
 
-
+        for(AiRespone aiRespone : response.getBody()) {
+            String thumnailUrl = productRepository.findById(aiRespone.getId()).get().getThumbnailUrl();
+            aiRespone.setThumbnailUrl(thumnailUrl);
+        }
         // Kiểm tra dữ liệu nhận về
         if (response.getBody() != null) {
             System.out.println("AI Response:");

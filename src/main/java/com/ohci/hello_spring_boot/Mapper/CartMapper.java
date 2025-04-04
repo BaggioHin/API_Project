@@ -13,6 +13,8 @@ public interface CartMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(source = "id",target="id")
     @Mapping(source = "thumbnailUrl", target = "thumbnailUrl")
+    @Mapping(source = "name", target = "name")
     CartResponse toCart(CartItemEntity cartItemEntity);
+
     CartItemEntity toCartItemEntity(CartRequest cartRequest,@MappingTarget CartItemEntity cartItemEntity);
 }

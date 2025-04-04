@@ -3,9 +3,9 @@ package com.ohci.hello_spring_boot.DTO.respone;
 
 import lombok.*;
 
-@Data  // Tự động tạo getter, setter, toString, equals, hashCode
-@AllArgsConstructor // Tạo constructor có tham số
-@NoArgsConstructor  // Tạo constructor không tham số
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder
 public class ProductResponse {
     private Long id;
